@@ -1,7 +1,7 @@
 {
-  "name": "babel-plugin-react-element-info",
+  "name": "babel-plugin-react-element-info-unique",
   "version": "1.0.1",
-  "description": "Adds React properties",
+  "description": "Adds React properties with unique ids",
   "main": "lib/index.js",
   "scripts": {
     "lint": "eslint src test",
@@ -10,10 +10,6 @@
     "build": "rm -rf lib && mkdir lib && babel src --out-dir lib",
     "flow": "flow",
     "prepublish": "npm run build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/suprraz/babel-plugin-react-element-info.git"
   },
   "keywords": [
     "babel",
@@ -26,11 +22,7 @@
     "lib",
     "src"
   ],
-  "author": "Razvan Suprovici (https://github.com/suprraz)",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/suprraz/babel-plugin-react-element-info/issues"
-  },
   "dependencies": {},
   "devDependencies": {
     "babel-cli": "^6.14.0",
