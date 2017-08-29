@@ -5,7 +5,15 @@ export default function babelPluginReactElementInfo({ types: t }) {
     let prefix;
     let filenameAttr;
     let nodeNameAttr;
-    let fileNames = {};
+    const fileNames = {};
+    const getFileName = name => {
+        const count = fileNames[name] || 1;
+        const nameIdx = `${name}${count}`;
+
+        fileNames[name] = count + 1;
+
+        return nameIdx;
+    };
 
     const visitor = {
         Program(path, state) {
@@ -16,7 +24,6 @@ export default function babelPluginReactElementInfo({ types: t }) {
             }
             filenameAttr = `${prefix}-file`;
             nodeNameAttr = `${prefix}-node`;
-            fileNames = {};
         },
         JSXOpeningElement(path, state) {
             const attributes = path.container.openingElement.attributes;
@@ -34,18 +41,31 @@ export default function babelPluginReactElementInfo({ types: t }) {
 
             if (state.file && state.file.opts && state.file.opts.basename) {
                 const name = state.file.opts.basename;
-                let count = fileNames[name] || 1;
-                const nameIdx = `${name}${count}`;
-
-                fileNames[name] = count + 1;
 
                 newAttributes.push(t.jSXAttribute(
                     t.jSXIdentifier(filenameAttr),
-                    t.stringLiteral(nameIdx))
+                    t.stringLiteral(getFileName(name)))
                 );
             }
 
             attributes.push(...newAttributes);
+        },
+        CallExpression(path, state) {
+            if (path.node.callee.type === 'MemberExpression'
+                && path.node.callee.object.name === 'React'
+                && path.node.callee.property.name === 'createElement'
+                || path.node.callee.type === 'Identifier'
+                && path.node.callee.name === 'createElement') {
+                const name = state.file.opts.basename;
+
+                path.node.arguments[1] && path.node.arguments[1].properties
+                && path.node.arguments[1].properties.push(
+                    t.objectProperty(
+                        t.stringLiteral(filenameAttr),
+                        t.stringLiteral(getFileName(name))
+                    )
+                );
+            }
         }
     };
 
