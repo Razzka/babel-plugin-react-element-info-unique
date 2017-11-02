@@ -5,15 +5,6 @@ export default function babelPluginReactElementInfo({ types: t }) {
     let prefix;
     let filenameAttr;
     let nodeNameAttr;
-    const fileNames = {};
-    const getFileName = name => {
-        const count = fileNames[name] || 1;
-        const nameIdx = `${name}${count}`;
-
-        fileNames[name] = count + 1;
-
-        return nameIdx;
-    };
 
     const visitor = {
         Program(path, state) {
@@ -44,7 +35,7 @@ export default function babelPluginReactElementInfo({ types: t }) {
 
                 newAttributes.push(t.jSXAttribute(
                     t.jSXIdentifier(filenameAttr),
-                    t.stringLiteral(getFileName(name)))
+                    t.stringLiteral(name))
                 );
             }
 
@@ -62,7 +53,7 @@ export default function babelPluginReactElementInfo({ types: t }) {
                 && path.node.arguments[1].properties.push(
                     t.objectProperty(
                         t.stringLiteral(filenameAttr),
-                        t.stringLiteral(getFileName(name))
+                        t.stringLiteral(name)
                     )
                 );
             }

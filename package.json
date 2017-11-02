@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-react-element-info-unique",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Adds React properties with unique ids",
   "main": "lib/index.js",
   "scripts": {
