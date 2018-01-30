@@ -1,10 +1,21 @@
 // @flow weak
 
-export default function babelPluginReactElementInfo({ types: t }) {
+let filesChanged; // { name:'', files: []}; //example
+try {
+    if (process.env.FILES_CHANGED) {
+        filesChanged = JSON.parse(process.env.FILES_CHANGED);
+    }
+}
+catch (e) {
+    filesChanged = null;
+}
+
+function babelPluginReactElementInfo({ types: t }) {
     const defaultPrefix = 'data-qa';
     let prefix;
     let filenameAttr;
     let nodeNameAttr;
+    let changedVersionAttr;
 
     const visitor = {
         Program(path, state) {
@@ -13,6 +24,8 @@ export default function babelPluginReactElementInfo({ types: t }) {
             } else {
                 prefix = defaultPrefix;
             }
+
+            changedVersionAttr = prefix + '-changed-version';
             filenameAttr = `${prefix}-file`;
             nodeNameAttr = `${prefix}-node`;
         },
@@ -20,6 +33,15 @@ export default function babelPluginReactElementInfo({ types: t }) {
             const attributes = path.container.openingElement.attributes;
 
             const newAttributes = [];
+
+            if (filesChanged && state.file && state.file.opts
+                && state.file.opts.sourceFileName
+                && (filesChanged.files.includes(state.file.opts.sourceFileName))) {
+                newAttributes.push(t.jSXAttribute(
+                    t.jSXIdentifier(changedVersionAttr),
+                    t.stringLiteral(filesChanged.name))
+                );
+            }
 
             if (path.container && path.container.openingElement
                 && path.container.openingElement.name
@@ -64,3 +86,5 @@ export default function babelPluginReactElementInfo({ types: t }) {
         visitor
     };
 }
+
+module.exports = babelPluginReactElementInfo;
