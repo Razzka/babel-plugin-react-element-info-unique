@@ -1,9 +1,17 @@
 // @flow weak
-
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const tmpFilePath = path.resolve(os.tmpdir(), 'changedFiles.json');
 let filesChanged; // { name:'', files: []}; //example
 try {
     if (process.env.FILES_CHANGED) {
         filesChanged = JSON.parse(process.env.FILES_CHANGED);
+    }
+    if (fs.existsSync(tmpFilePath)) 
+    {
+        const contents = fs.readFileSync(tmpFilePath, 'utf8');
+        filesChanged = JSON.parse(contents);
     }
 }
 catch (e) {
