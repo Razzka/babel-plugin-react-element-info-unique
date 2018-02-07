@@ -18,7 +18,7 @@ catch (e) {
     filesChanged = null;
 }
 
-function babelPluginReactElementInfo({ types: t }) {
+export default function babelPluginReactElementInfo({ types: t }) {
     const defaultPrefix = 'data-qa';
     let prefix;
     let filenameAttr;
@@ -32,7 +32,7 @@ function babelPluginReactElementInfo({ types: t }) {
             } else {
                 prefix = defaultPrefix;
             }
-
+          
             changedVersionAttr = prefix + '-changed-version';
             filenameAttr = `${prefix}-file`;
             nodeNameAttr = `${prefix}-node`;
@@ -94,5 +94,3 @@ function babelPluginReactElementInfo({ types: t }) {
         visitor
     };
 }
-
-module.exports = babelPluginReactElementInfo;
